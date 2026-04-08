@@ -38,23 +38,24 @@ class RSA {
     this.q = q;
     n = p * q;
     phiOfN = (p - 1) * (q - 1);
-    for (e = 2; e < phiOfN && !canHandleCase; e++) {
-      if (Primes.isPrime(e) && Primes.gcd(e, phiOfN) == 1) {
-
-        for (int k = 1; !canHandleCase; k++) {
-          int numerator = 1 + k * phiOfN;
-          if (numerator > Primes.SKY) break;
-          if (numerator % e != 0) continue;
-
-          d = numerator / e;
-          if (Primes.isPrime(d) &&
-              Primes.gcd(d, phiOfN) == 1 &&
-              e <= d) {
-            canHandleCase = true;
+    for (int i = 2; i < phiOfN && !canHandleCase; i++) {
+      if (Primes.isPrime(i) && Primes.gcd(i, phiOfN) == 1) {
+          for (int k = 1; !canHandleCase; k++) {
+              int numerator = 1 + k * phiOfN;
+              if (numerator > Primes.SKY) break;
+              if (numerator % i != 0) continue;
+  
+              int candidateD = numerator / i;
+              if (Primes.isPrime(candidateD) &&
+                  Primes.gcd(candidateD, phiOfN) == 1 &&
+                  i <= candidateD) {
+                  e = i;
+                  d = candidateD;
+                  canHandleCase = true;
+              }
           }
-        }
       }
-    }
+  }
     if (!canHandleCase) {
       throw new Exception("Cannot handle this case.");
     } else {
