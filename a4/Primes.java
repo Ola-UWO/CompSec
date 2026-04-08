@@ -20,7 +20,7 @@ class Primes
     static int SKY = -1;
 
     /* the values of the first NUM_PRIMES
-    "prime numbers */
+    prime numbers */
     static int[] primes =  new int[NUM_PRIMES];
 
     /* load the first 1000 prime numbers from the file "primes.txt"
@@ -49,7 +49,7 @@ class Primes
     {
         if (n > primes[primes.length - 1]) return false;
         if (n != 2 && n % 2 == 0) return false;
-        if (Arrays.binarySearch(primes, n) > 0) return true;
+        if (Arrays.binarySearch(primes, n) >= 0) return true;
         return false;
     }// isPrime method
 
@@ -60,18 +60,18 @@ class Primes
      */
     public static int[] factor(int n)
     {
-        ArrayList<Integer> ans = new ArrayList<>();
         for (int i = 0; i < primes.length; i++) {
-            if (n % primes[i] != 0) continue;
-            else {
-                ans.add(primes[i]);
-            }
-            if (ans.size() > 2) {
-                ans.removeAll(ans);
-                break;
+            int p = primes[i];
+            if (n % p == 0) {
+                int q = n / p;
+
+                if (isPrime(q)) {
+                    if (p <= q) return new int[]{p, q};
+                    else return new int[]{q, p};   
+                }
             }
         }
-        return ans.stream().mapToInt(Integer::intValue).toArray();
+        return new int[0];
     }// factor method
 
     /* return the greatest common divisor of the two input integers, which
@@ -87,11 +87,11 @@ class Primes
             m = n;
             n = temp;
         }
-        for (int r = 0;;) {
+        for (int r = 0; n % m != 0;) {
             r = n % m;
-            if (r == 0) return m;
             n = m;
             m = r;
         }
+        return m;
     }// gcd method
 }// Primes class
