@@ -30,7 +30,7 @@ class RC4
         int[] T = new int[keylen];
         for (i = 0; i < keylen; i++) {
             S[i] = i;
-            T[i] = K[i % keylen];
+            T[i] = K[i % K.length];
         }
         j = 0;
         for (i = 0; i < keylen; i++) {
@@ -73,7 +73,6 @@ class RC4
         try (FileInputStream in = new FileInputStream(new File(inFileName));
             FileOutputStream out = new FileOutputStream(new File(outFileName)))
         {
-            // loop while there is still another char
             int b;
             while ((b = in.read()) != -1) 
             {
@@ -81,7 +80,7 @@ class RC4
             }
 
         } catch (Exception e) {
-            System.out.println("Error");
+            e.printStackTrace();
         }
     }// encrypt method
 
@@ -93,5 +92,4 @@ class RC4
     {
         encrypt(inFileName, outFileName);
     }// decrypt method
-
 }// RC4 class
