@@ -25,16 +25,16 @@ class RC4
     */
     RC4(int[] K)
     {
-        S = new int[256];
-        int[] T = new int[256];
-        for (i = 0; i <= 255; i++) {
+        var keylen = 256;
+        S = new int[keylen];
+        int[] T = new int[keylen];
+        for (i = 0; i < keylen; i++) {
             S[i] = i;
             T[i] = K[i % K.length];
-        } 
-        // end for 
+        }
         j = 0;
-        for (i = 0; i <= 255; i++) {
-            j = (j + S[i] + T[i]) % 256;
+        for (i = 0; i < keylen; i++) {
+            j = (j + S[i] + T[i]) % keylen;
             swap(i, j);
         }
         i = 0;
@@ -46,11 +46,12 @@ class RC4
      */
     int nextRnd()
     {
-        i = (i + 1) % 256;
-        j = ( j + S[i]) % 256;
+        var keylen = 256;
+        i = (i + 1) % keylen;
+        j = (j + S[i]) % keylen;
         swap(i, j);
 
-        return S[(S[i] + S[j]) % 256]; 
+        return S[(S[i] + S[j]) % keylen];
     }// PRGA method
 
     /* this method swaps elements at position i and j in the S array, where
@@ -69,21 +70,18 @@ class RC4
     */
     void encrypt(String inFileName, String outFileName)
     {
-        try (FileInputStream in = new FileInputStream(inFileName);
-            FileOutputStream out = new FileOutputStream(outFileName)) {
-            int data;
-            
-            // Read byte by byte until the end of the file (-1 is returned)
-            while ((data = in.read()) != -1) {
-                int rnd = nextRnd();
-                int encrypted = data ^ rnd;
-                out.write(encrypted);
+        try (FileInputStream in = new FileInputStream(new File(inFileName));
+            FileOutputStream out = new FileOutputStream(new File(outFileName)))
+        {
+            int b;
+            while ((b = in.read()) != -1) 
+            {
+                out.write(nextRnd() ^ b);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }// encrypt method
 
     /* this method takes the name of two files, opens them as input
@@ -93,7 +91,5 @@ class RC4
     void decrypt(String inFileName, String outFileName)
     {
         encrypt(inFileName, outFileName);
-
     }// decrypt method
-
 }// RC4 class

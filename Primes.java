@@ -19,7 +19,8 @@ class Primes
        assignment */
     static int SKY = -1;
 
-    /* the values of the first NUM_PRIMES prime numbers */
+    /* the values of the first NUM_PRIMES
+    prime numbers */
     static int[] primes =  new int[NUM_PRIMES];
 
     /* load the first 1000 prime numbers from the file "primes.txt"
@@ -28,21 +29,17 @@ class Primes
     */
     public static void loadPrimes()
     {
-        String fileName = "primes.txt";
-
-        try (Scanner scan = new Scanner(new File(fileName))) {
-            int i = 0;
-            while (scan.hasNext()) {
-                int primeNum = scan.nextInt();
-                primes[i] = primeNum;
-                i++;
+        try (var sc = new Scanner(new File("primes.txt"));)
+        {
+            for (int i = 0; sc.hasNextInt(); i++) {
+                primes[i] = sc.nextInt();
+                if (i == primes.length - 1) {
+                    SKY = primes[i] * primes[i];
+                }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Error: File not found at " + fileName);
-            e.printStackTrace();
-        }
-
-        SKY = (int) Math.pow(primes[primes.length - 1], 2);
+        } catch (Exception e) {
+            System.out.println("Error");
+        } 
     }// loadPrimes method
 
     /* return true if and only if its input is one of the first 1000
@@ -50,11 +47,9 @@ class Primes
     */
     public static boolean isPrime(int n)
     {
-        for (int prime : primes) {
-            if (prime == n) {
-                return true;
-            }
-        }
+        if (n > primes[primes.length - 1]) return false;
+        if (n != 2 && n % 2 == 0) return false;
+        if (Arrays.binarySearch(primes, n) >= 0) return true;
         return false;
     }// isPrime method
 
@@ -65,24 +60,18 @@ class Primes
      */
     public static int[] factor(int n)
     {
-        int[] twoPrimeFactors = new int[2];
-        int[] emptyArray = new int[0];
-        int j;
-        boolean isFound = false;
-        for (int i = 2; i <= n && !isFound; i++) {
-            if (n % i == 0) {
-                j = n / i;
-                if (j * i == n && isPrime(i) && isPrime(j)) {
-                    twoPrimeFactors[0] = i;
-                    twoPrimeFactors[1] = j;
-                    isFound = true;
+        for (int i = 0; i < primes.length; i++) {
+            int p = primes[i];
+            if (n % p == 0) {
+                int q = n / p;
+
+                if (isPrime(q)) {
+                    if (p <= q) return new int[]{p, q};
+                    else return new int[]{q, p};   
                 }
             }
         }
-        if (twoPrimeFactors[0] != 0 && twoPrimeFactors[1] != 0) {
-            return twoPrimeFactors;
-        }
-        return emptyArray;
+        return new int[0];
     }// factor method
 
     /* return the greatest common divisor of the two input integers, which
@@ -91,24 +80,18 @@ class Primes
        'gcd' method in any of the Java API classes. You may not use any helper
        methods. You must implement this method from first principles.
     */
-    public static int gcd(int m,int n)
+    public static int gcd(int m, int n)
     {   
-        int num1 = Math.max(n,m);
-        int num2 = Math.min(n,m);
-        int curr = num1;
-        int q = -1;
-        int r = num1 % num2;
-
-        while (r != 0) {
-            num1 = num2;
-            num2 = r;
-            q = num1 / num2;
-            r = num1 % num2;
-
-            curr = num2 * q + r;
+        if (n < m) {
+            var temp = m;
+            m = n;
+            n = temp;
         }
-
-        return num2; 
+        for (int r = 0; n % m != 0;) {
+            r = n % m;
+            n = m;
+            m = r;
+        }
+        return m;
     }// gcd method
-
 }// Primes class
