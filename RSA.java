@@ -85,7 +85,7 @@ class RSA {
       }
       base = (base * base) % m;
     }
-    return ((int)(base * y) % m);
+    return (int)((base * y) % m);
   }// modularExponent method
 
   /*
